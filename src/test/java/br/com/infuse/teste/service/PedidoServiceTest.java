@@ -2,8 +2,10 @@ package br.com.infuse.teste.service;
 
 import br.com.infuse.teste.domain.request.RequestPedidoDto;
 import br.com.infuse.teste.domain.response.ResponsePedidoDto;
+import br.com.infuse.teste.entity.Cliente;
 import br.com.infuse.teste.entity.Pedido;
 import br.com.infuse.teste.exception.NotFoundException;
+import br.com.infuse.teste.repository.ClienteRepository;
 import br.com.infuse.teste.repository.PedidoRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +26,8 @@ import static org.mockito.Mockito.*;
 class PedidoServiceTest {
     @Mock
     PedidoRepository repository;
+    @Mock
+    ClienteRepository clienteRepository;
     @InjectMocks
     PedidoService pedidoService;
 
@@ -35,9 +39,20 @@ class PedidoServiceTest {
     @Test
     void testInserirPedido() {
         when(repository.findByNumeroControle(anyLong())).thenReturn(Optional.empty());
+        when(clienteRepository.findById(anyLong())).thenReturn(Optional.of(mock(Cliente.class)));
 
         ResponseEntity result = pedidoService.inserirPedidos(List.of(new RequestPedidoDto(1L,
                 LocalDate.now(), "Produto", BigDecimal.TEN, 0, 1L)));
+        Assertions.assertNotNull( result);
+    }
+
+    @Test
+    void testInserirPedido_CamposObrigatoriosNaoEnviado() {
+        when(repository.findByNumeroControle(anyLong())).thenReturn(Optional.empty());
+        when(clienteRepository.findById(anyLong())).thenReturn(Optional.of(mock(Cliente.class)));
+
+        ResponseEntity result = pedidoService.inserirPedidos(List.of(new RequestPedidoDto(1L,
+                LocalDate.now(), "Produto", BigDecimal.TEN, 0, null)));
         Assertions.assertNotNull( result);
     }
 
@@ -53,6 +68,7 @@ class PedidoServiceTest {
     @Test
     void testInserirPedido_MaiorQueCincoQuantidade() {
         when(repository.findByNumeroControle(anyLong())).thenReturn(Optional.empty());
+        when(clienteRepository.findById(anyLong())).thenReturn(Optional.of(mock(Cliente.class)));
 
         ResponseEntity result = pedidoService.inserirPedidos(List.of(new RequestPedidoDto(1L,
                 LocalDate.now(), "Produto", BigDecimal.TEN, 6, 1L)));
@@ -63,6 +79,7 @@ class PedidoServiceTest {
     @Test
     void testInserirPedido_DezQuantidade() {
         when(repository.findByNumeroControle(anyLong())).thenReturn(Optional.empty());
+        when(clienteRepository.findById(anyLong())).thenReturn(Optional.of(mock(Cliente.class)));
 
         ResponseEntity result = pedidoService.inserirPedidos(List.of(new RequestPedidoDto(1L,
                 LocalDate.now(), "Produto", BigDecimal.TEN, 10, 1L)));
