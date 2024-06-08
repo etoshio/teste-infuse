@@ -32,7 +32,7 @@ class PedidoControllerTest {
 
     @Test
     void testInserirPedidos() {
-        when(service.inserirPedidoa(any())).thenReturn(ResponseEntity.ok().build());
+        when(service.inserirPedidos(any())).thenReturn(ResponseEntity.ok().build());
 
         ResponseEntity result = pedidoController.inserirPedidos(List.of(new RequestPedidoDto(1L, LocalDate.now(),
                 "nomeProduto", BigDecimal.TEN, 0, 1L)));

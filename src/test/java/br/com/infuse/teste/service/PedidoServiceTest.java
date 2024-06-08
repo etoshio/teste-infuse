@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +36,7 @@ class PedidoServiceTest {
     void testInserirPedido() {
         when(repository.findByNumeroControle(anyLong())).thenReturn(Optional.empty());
 
-        ResponseEntity result = pedidoService.inserirPedidoa(List.of(new RequestPedidoDto(1L,
+        ResponseEntity result = pedidoService.inserirPedidos(List.of(new RequestPedidoDto(1L,
                 LocalDate.now(), "Produto", BigDecimal.TEN, 0, 1L)));
         Assertions.assertNotNull( result);
     }
@@ -46,7 +45,7 @@ class PedidoServiceTest {
     void testInserirPedido_NumeroControleJaCadastrado() {
         when(repository.findByNumeroControle(anyLong())).thenReturn(Optional.of(List.of(mock(Pedido.class))));
 
-        ResponseEntity result = pedidoService.inserirPedidoa(List.of(new RequestPedidoDto(1L,
+        ResponseEntity result = pedidoService.inserirPedidos(List.of(new RequestPedidoDto(1L,
                 LocalDate.now(), "Produto", BigDecimal.TEN, 0, 1L)));
         Assertions.assertNotNull( result);
     }
@@ -55,7 +54,7 @@ class PedidoServiceTest {
     void testInserirPedido_MaiorQueCincoQuantidade() {
         when(repository.findByNumeroControle(anyLong())).thenReturn(Optional.empty());
 
-        ResponseEntity result = pedidoService.inserirPedidoa(List.of(new RequestPedidoDto(1L,
+        ResponseEntity result = pedidoService.inserirPedidos(List.of(new RequestPedidoDto(1L,
                 LocalDate.now(), "Produto", BigDecimal.TEN, 6, 1L)));
         Assertions.assertNotNull( result);
     }
@@ -65,7 +64,7 @@ class PedidoServiceTest {
     void testInserirPedido_DezQuantidade() {
         when(repository.findByNumeroControle(anyLong())).thenReturn(Optional.empty());
 
-        ResponseEntity result = pedidoService.inserirPedidoa(List.of(new RequestPedidoDto(1L,
+        ResponseEntity result = pedidoService.inserirPedidos(List.of(new RequestPedidoDto(1L,
                 LocalDate.now(), "Produto", BigDecimal.TEN, 10, 1L)));
         Assertions.assertNotNull( result);
     }

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PedidoService {
@@ -24,7 +23,7 @@ public class PedidoService {
     @Autowired
     private PedidoRepository repository;
 
-    public ResponseEntity inserirPedidoa(List<RequestPedidoDto> pedidoDtoList) {
+    public ResponseEntity<Void> inserirPedidos(List<RequestPedidoDto> pedidoDtoList) {
         if(pedidoDtoList != null && pedidoDtoList.size() > 10) {
             throw new ValidacaoException("A lista tem que possuir até 10 pedidos");
         }
@@ -35,7 +34,8 @@ public class PedidoService {
             if(!validarPedidoNumeroCadastrado(pedido.getNumeroControle())) {
                 Pedido pedidoDb = PedidoMapper.INSTANCE.covert(pedido);
                 pedidoDb.setValorTotal(pedido.getValorTotalDesconto());
-                pedidoDb.setQuantidade(pedido.getQuantidade() == null || pedido.getQuantidade() == 0 ? 1 : pedido.getQuantidade());
+                pedidoDb.setDataCadastro(ObjectUtils.isEmpty(pedido.getDataCadastro()) ? LocalDate.now() : pedido.getDataCadastro());
+                pedidoDb.setQuantidade(ObjectUtils.isEmpty(pedido.getQuantidade()) || pedido.getQuantidade() == 0 ? 1 : pedido.getQuantidade());
                 repository.save(pedidoDb);
             }
         });
@@ -58,12 +58,12 @@ public class PedidoService {
         List<Pedido> pedidoList = new ArrayList<>();
         if(ObjectUtils.isEmpty(numeroControle) && ObjectUtils.isEmpty(dataCadastro)) {
             pedidoList = repository.findAll();
-        } else if (dataCadastro != null && numeroControle != null) {
+        } else if (ObjectUtils.isNotEmpty(numeroControle) && ObjectUtils.isNotEmpty(dataCadastro)) {
             pedidoList = repository.findByDataCadastroAndNumeroControle(dataCadastro, numeroControle)
                     .orElse(null);;
-        } else if (dataCadastro == null && numeroControle != null && numeroControle > 0) {
+        } else if (ObjectUtils.isEmpty(dataCadastro) && ObjectUtils.isNotEmpty(numeroControle) && numeroControle > 0) {
             pedidoList = repository.findByNumeroControle(numeroControle).orElse(null);
-        } else if (numeroControle == null && dataCadastro != null) {
+        } else if (ObjectUtils.isEmpty(numeroControle) && ObjectUtils.isNotEmpty(dataCadastro)) {
             pedidoList = repository.findByDataCadastro(dataCadastro).orElse(null);
         }
 
@@ -71,8 +71,7 @@ public class PedidoService {
             throw new NotFoundException("Nenhum registro encontrado");
         }
 
-        pedidoDtoList = pedidoList.stream().map(pedido -> PedidoMapper.INSTANCE.toResponseDto(pedido))
-                .collect(Collectors.toList());
+        pedidoDtoList = pedidoList.stream().map(pedido -> PedidoMapper.INSTANCE.toResponseDto(pedido)).toList();
         return pedidoDtoList;
     }
 }

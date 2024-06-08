@@ -16,7 +16,7 @@ O script da tabela está localizado em resources/db.migration
 - MapStruct
 - Maven
 - Flyway
-- OpenApi
+- OpenApi/Swagger
 - Banco de Dados MySQL
 
 # Como executar o projeto
