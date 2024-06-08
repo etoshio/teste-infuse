@@ -21,7 +21,7 @@ public class PedidoController {
 
     @PostMapping
     public ResponseEntity inserirPedidos(@RequestBody @Valid List<RequestPedidoDto> pedidoDtoList){
-        return service.inserirPedidoa(pedidoDtoList);
+        return service.inserirPedidos(pedidoDtoList);
     }
 
     @GetMapping("/filtro")
